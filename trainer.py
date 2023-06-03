@@ -98,4 +98,4 @@ cnn.compile(optimizer='adam',loss=tf.keras.losses.CategoricalCrossentropy(),metr
 # Run data through the CNN
 cnn.fit(X_train,y_train,epochs=7,batch_size=32,validation_data=(X_test,y_test))
 
-cnn.save('stop_sign_cnn')
+#cnn.save('stop_sign_cnn')
