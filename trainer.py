@@ -3,99 +3,217 @@ import os
 import tensorflow as tf
 import tensorflow.python.keras.layers as layers
 import numpy as np
+from matplotlib import pyplot as plt
+from tensorflow import keras
+import keras_tuner as kt
 
-#define folder paths
-stop_sign = '../cascades/stop-sign/'
-negative_path = '../cascades/negative'
+HEIGHT = 224
+WIDTH = 224
+'''
+FUNCTIONS
+'''
+# augmentImages function enlarges the dataset by augmenting an image image to n number of images.
+def augmentImage(img):
+    # Rotation
+    # Set random rotation angle that follows a normal distribution
+    center = (WIDTH / 2, HEIGHT / 2)
+    angle = (int)(np.random.normal(0,10)) # large standard deviation of 10 degrees so that the model is trained on a large variety of angles
+    if angle < 0:
+        angle = 360 + angle  # Convert negative angle to positive angle
+    rot_matrix = cv2.getRotationMatrix2D(center,angle,1.0)
+    img = cv2.warpAffine(img, rot_matrix,(WIDTH,HEIGHT))
 
-#define list for positive and negative images
-stops = []
-negatives = []
+    # Translation -- shift amounts follow normal distribution
+    shift_x = np.random.normal(0,5) # ~68% of values will fall between -5 and 5
+    shift_y = np.random.normal(0,5) # ~95% of values will fall between -10 and 10
+    M = np.float32([[1, 0, shift_x], [0, 1, shift_y]]) # transformation matrix
+    img = cv2.warpAffine(img, M, (img.shape[1], img.shape[0]))
 
-# read through positve image folder first
-# rotate 90 degrees to proper orientation and resize to 28*28 pixel array
-# store in positives[]
+    # Contrast Adjustment
+    contrast_factor = np.random.normal(1.5,.5)
+    img = cv2.convertScaleAbs(img, alpha=contrast_factor, beta=0)
+
+    # Brightness Adjustment
+    brightness_factor = np.random.normal(1.5,.4)
+    img = cv2.convertScaleAbs(img, alpha=brightness_factor, beta=0)
+
+    return img
+
+# Pulls the jpeg images to folders and creates a list of images
 # Code sourced from:
 #   https://www.geeksforgeeks.org/how-to-iterate-through-images-in-a-folder-python/#
 #   https://www.geeksforgeeks.org/python-opencv-cv2-rotate-method/
-#width and height of training images is 28*28 pixels
+# width and height of training images is 224*224 pixels
 # https://www.youtube.com/watch?v=XrCAvs9AePM&ab_channel=LearnCodeByGaming
-def imgFolderToList(path,list):
-    width = 64
-    height = 64
+def imgFolderToList(path, list,n):
     for p in os.listdir(path):
         img = cv2.imread(os.path.join(path, p))
-        img = cv2.resize(img,(width,height))
+        img = cv2.resize(img, (WIDTH, HEIGHT))
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
         list.append(img)
+        for i in range(n):
+            aug_img = img
+            aug_img = augmentImage(img)
+            list.append(aug_img)
+    if list is None:
+        print('list empty')
+
+# Convert jpeg image list to NumPy array
+def list_to_arr(image_list):
+    resized_images = []
+    for img in image_list:
+        resized_img = cv2.resize(img, (WIDTH, HEIGHT))
+        resized_images.append(resized_img)
+    arr = np.stack(resized_images)
+    arr = arr.astype('float32') / 255.0
+    return arr
 
 
-imgFolderToList(negative_path, negatives)
-imgFolderToList(stop_sign,stops)
+'''
+CHECK GPU SUPPORT
 
-# Convert images to tensors (so Tensorflow can read the images)
-# Images to Tensors code sourced from: https://www.binarystudy.com/2022/01/how-to-convert-image-to-tensor-in-tensorflow.html
-neg_tensors = []
-pos_tensors = []
-for n in negatives:
-    neg_tensors.append(tf.convert_to_tensor(n))
-for p in stops:
-    pos_tensors.append(tf.convert_to_tensor(p))
+This step is important because it uses the GPU (Graphics Processing Unit) instead of the CPU (Central Processing Unit)
+Using the GPU generally makes deep learning tasks run much faster.
 
-# Convert to NumPy arrays of image tensors
-neg_array = np.array(neg_tensors)
-pos_array = np.array(pos_tensors)
+Enabling GPU Support code sourced from: https://medium.com/mlearning-ai/install-tensorflow-on-mac-m1-m2-with-gpu-support-c404c6cfb580
+'''
+gpu = len(tf.config.list_physical_devices('GPU'))>0
+print("GPU is", "available" if gpu else "NOT AVAILABLE")
 
-# Normalize values between 0 and 1
-pos_array = pos_array.astype('float32') / 255.0
-neg_array = neg_array.astype('float32') / 255.0
+'''
+PREPROCESSING
+'''
+# Define folder paths
+stop_sign = './stop-sign/'
+no_uturn = './no-uturn'
+yield_path = './yield'
+dne_path = './do-not-enter'
+one_way_l_path = './1-way-left'
+one_way_r_path = './1-way-right'
+no_l_turn_path = './no-left-turn'
+no_r_turn_path = './no-right-turn'
 
-# Create labels for the positive and negative images.
-# Positive images, where there is a stop sign, get a value of 1.
-# negative images, where there is no stop sign, get a value of 0.
-pos_labels = np.ones(len(pos_array))
-neg_labels = np.zeros(len(neg_array))
+# Initialize lists
+stops = []
+nouturns = []
+yields = []
+dnes = []
+onewayls = []
+onewayrs = []
+nolturns = []
+norturns = []
 
-# Combine positive and negative images and positive and negative labels
-images = np.concatenate((pos_array,neg_array),axis=0)
-labels = np.concatenate((pos_labels,neg_labels),axis=0)
+AUGMENT_SIZE = 5 # Number of augment images created for each image in the dataset
 
-# Convert labels to one-hot encoded format
-labels = tf.keras.utils.to_categorical(labels)
+# Add jpeg images from folders to list
+imgFolderToList(stop_sign, stops,AUGMENT_SIZE)
+imgFolderToList(no_uturn, nouturns,AUGMENT_SIZE)
+imgFolderToList(yield_path,yields,AUGMENT_SIZE)
+imgFolderToList(dne_path,dnes,AUGMENT_SIZE)
+imgFolderToList(one_way_l_path,onewayls,AUGMENT_SIZE)
+imgFolderToList(one_way_r_path,onewayrs,AUGMENT_SIZE)
+imgFolderToList(no_l_turn_path,nolturns,AUGMENT_SIZE)
+imgFolderToList(no_r_turn_path,norturns,AUGMENT_SIZE)
 
-# Randomize the order of the lists. Because there's 2 separate lists, need to ensure that both lists are randomized in the same order so they align
-rand_state = np.random.get_state()
+# Convert jpeg image lists to NumPy array lists and normalize values so that TensorFlow can process the data
+stops = list_to_arr(stops)
+nouturns = list_to_arr(nouturns)
+yields = list_to_arr(yields)
+dnes = list_to_arr(dnes)
+onewayls = list_to_arr(onewayls)
+onewayrs = list_to_arr(onewayrs)
+nolturns = list_to_arr(nolturns)
+norturns = list_to_arr(norturns)
+
+# Create labels for each image array
+stop_labels = np.full((len(stops),), 'stop sign')
+nouturn_labels = np.full((len(nouturns),), 'no u-turn')
+yield_labels = np.full((len(yields),), 'yield')
+dne_labels = np.full((len(dnes),), 'do not enter')
+one_way_l_labels = np.full((len(onewayls),), 'one way -- left')
+one_way_r_labels = np.full((len(onewayrs),), 'one way -- right')
+no_l_turn_labels = np.full((len(nolturns),), 'no left turn')
+no_r_turn_labels = np.full((len(norturns),), 'no right turn')
+
+# Concatenate the image array
+images = np.concatenate((stops, nouturns, yields, dnes, onewayls, onewayrs, nolturns,norturns), axis=0) # X values
+
+# Create labels by encoding the strings to integer values
+label_dict = {
+    'stop sign': 0,
+    'no u-turn': 1,
+    'yield': 2,
+    'do not enter': 3,
+    'one way -- left': 4,
+    'one way -- right': 5,
+    'no left turn': 6,
+    'no right turn': 7
+}
+labels_encoded = np.array([label_dict[label] for label in np.concatenate((stop_labels, nouturn_labels, yield_labels,dne_labels, one_way_l_labels,one_way_r_labels,no_l_turn_labels,no_r_turn_labels))])
+
+# Convert the encoded labels to one-hot encoded format
+labels = tf.keras.utils.to_categorical(labels_encoded) # y values
+
+# Randomize the orders of the arrays for training/testing
+# Use same random state for images and labels so that the images and their corresponding labels are aligned
+random_state = np.random.get_state()
 np.random.shuffle(images)
-np.random.set_state(rand_state)
+np.random.set_state(random_state)
 np.random.shuffle(labels)
 
-# Divide into X_train, y_train, X_test, y_test for training and test sets
+
+# Divide into X_train, y_train, X_val, y_val for training and validation sets
 # images are X; labels are y
-TRAIN_SIZE = .7 # the percentage of the list that is used for training. 1-TRAIN_SIZE = testing size. Train_size is rounded to nearest integer
+TRAIN_SIZE = .8 # the percentage of the list that is used for training. Rounded to the nearest integer
+VAL_SIZE = .15 # percentage of validation test set. rounded to the nearest integer
 
-train_size = (int) ((len(images)+.5) / TRAIN_SIZE)
+train_size = (int)((len(images) + .5) * TRAIN_SIZE)
+val_size = (int)((len(images) + .5) * VAL_SIZE)
 
+
+# Split data into training, validation, and test sets
 X_train = images[:train_size]
 y_train = labels[:train_size]
-X_test = images[train_size:]
-y_test = labels[train_size:]
+X_val = images[train_size:train_size+val_size]
+y_val = labels[train_size:train_size+val_size]
+X_test = images[train_size+val_size:]
+y_test = labels[train_size+val_size:]
 
-# Define CNN sequential model
-cnn = tf.keras.Sequential()
+print(f'Training data size: {len(X_train)}')
+print(f'Validation data size: {len(X_val)}')
+print(f'Test data size: {len(X_test)}')
+print(f'\nTotal dataset size: {len(images)}')
 
-# Set up CNN architecture
-cnn.add(layers.Conv2D(32,(3,3),activation='relu',input_shape=(64,64,3)))
-cnn.add(layers.MaxPooling2D((2,2)))
+'''
+CONVOLUTIONAL NEURAL NETWORK
+'''
 
-cnn.add(layers.Dropout(rate=.3))
+# Create the ResNet152 model
+cnn = tf.keras.applications.resnet.ResNet50(include_top=True, weights=None, input_shape=(WIDTH, HEIGHT, 3), pooling='max', classes=8)
 
-cnn.add(layers.Flatten())
+# Compile the model
+cnn.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
-cnn.add(layers.Dense(64,activation='relu'))
-cnn.add(layers.Dense(2,activation='softmax'))
+# Sourced from: https://towardsdatascience.com/a-practical-introduction-to-early-stopping-in-machine-learning-550ac88bc8fd
+# Stop training cnn when val_accuracy achieves 90% accuracy
+# Define the EarlyStopping callback
+early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=10, mode='max', baseline=0.9, verbose=1)
 
-cnn.compile(optimizer='adam',loss=tf.keras.losses.CategoricalCrossentropy(),metrics=['accuracy'])
+# Fit the CNN to the training data
+cnn.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val), callbacks=[early_stopping])
 
-# Run data through the CNN
-cnn.fit(X_train,y_train,epochs=7,batch_size=32,validation_data=(X_test,y_test))
+# Evaluate the model
+loss, accuracy = cnn.evaluate(X_val, y_val)
 
-#cnn.save('stop_sign_cnn')
+# Save the highest accuracy of all runs in a file
+# If the current accuracy is greater than the accuracy in the file, save the cnn (new trained model is more accurate)
+# Goal is to achieve 90% accuracy, so if accuracy is above 90%, print that accuracy goal has been achieved
+with open('accuracy.txt', 'w') as f:
+    f.write(str(accuracy))
+with open('accuracy.txt', 'r') as f:
+    historic_accuracy = float(f.readline())
+# Save the trained model
+if accuracy > historic_accuracy:
+    cnn.save('traffic-sign-cnn')
+    if accuracy > .9:
+        print('90% Accuracy Achieved')
