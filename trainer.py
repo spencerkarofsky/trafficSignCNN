@@ -208,7 +208,6 @@ loss, accuracy = cnn.evaluate(X_val, y_val)
 # Goal is to achieve 90% accuracy, so if accuracy is above 90%, print that accuracy goal has been achieved
 with open('accuracy.txt', 'r') as f:
     historic_accuracy = float(f.readline())
-print(accuracy,historic_accuracy)
 # Save the trained model
 if accuracy > historic_accuracy:
     with open('accuracy.txt', 'w') as f:
