@@ -1,9 +1,7 @@
 import cv2
 import os
 import tensorflow as tf
-import tensorflow.python.keras.layers as layers
 import numpy as np
-from matplotlib import pyplot as plt
 from tensorflow import keras
 import keras_tuner as kt
 
@@ -208,12 +206,14 @@ loss, accuracy = cnn.evaluate(X_val, y_val)
 # Save the highest accuracy of all runs in a file
 # If the current accuracy is greater than the accuracy in the file, save the cnn (new trained model is more accurate)
 # Goal is to achieve 90% accuracy, so if accuracy is above 90%, print that accuracy goal has been achieved
-with open('accuracy.txt', 'w') as f:
-    f.write(str(accuracy))
 with open('accuracy.txt', 'r') as f:
     historic_accuracy = float(f.readline())
+print(accuracy,historic_accuracy)
 # Save the trained model
 if accuracy > historic_accuracy:
+    with open('accuracy.txt', 'w') as f:
+        f.write(str(accuracy))
     cnn.save('traffic-sign-cnn')
     if accuracy > .9:
-        print('90% Accuracy Achieved')
+        print(f'Model achieved an accuracy of {accuracy*100:.2f}%')
+        print('This value exceeds the predetermined 90% accuracy threshold')
