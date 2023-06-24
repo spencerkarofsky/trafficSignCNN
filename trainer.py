@@ -11,7 +11,7 @@ WIDTH = 224
 '''
 FUNCTIONS
 '''
-# augmentImages function enlarges the dataset by augmenting an image image to n number of images.
+# augmentImages function enlarges the dataset by augmenting an image to n number of images.
 def augmentImage(img):
     # Rotation
     # Set random rotation angle that follows a normal distribution
@@ -124,6 +124,8 @@ onewayrs = list_to_arr(onewayrs)
 nolturns = list_to_arr(nolturns)
 norturns = list_to_arr(norturns)
 
+
+
 # Create labels for each image array
 stop_labels = np.full((len(stops),), 'stop sign')
 nouturn_labels = np.full((len(nouturns),), 'no u-turn')
@@ -227,37 +229,3 @@ if accuracy > historic_accuracy:
     if accuracy > .9:
         print(f'Model achieved an accuracy of {accuracy*100:.2f}%')
         print('This value exceeds the predetermined 90% accuracy threshold')
-
-
-
-
-'''
-# Graph Loss and Accuracy of the Model
-
-# Plot images from X_test with the CNN's predictions and their actual values
-num_images = (int)(len(X_val)/10)
-cols = 4
-rows = (num_images + cols - 1) // cols  # Calculate the number of rows based on the number of images
-
-fig, axes = plt.subplots(rows, cols, figsize=(45, 45))  # Increase the figsize for larger images
-
-for i, ax in enumerate(axes.flatten()):
-    if i < num_images:
-        img = X_val[i]  # Get the i-th image array
-        ax.imshow(img)  # Plot the image
-        ax.axis('off')
-        y_pred = cnn.predict(img[np.newaxis, ...])  # Add additional dimension for batch
-        predicted_class = np.argmax(y_pred)  # Get the index of the predicted class
-        y_true_index = np.argmax(y_val[i])  # Get the index of the actual class
-        y_true_label = [k for k, v in label_dict.items() if v == y_true_index][0]  # Retrieve the label from the label_dict
-        predicted_label = [k for k, v in label_dict.items() if v == predicted_class][0]  # Retrieve the predicted label
-        title = 'Prediction: ' + predicted_label + '\nActual: ' + y_true_label  # Combine the predicted and actual labels
-        if not (predicted_label == y_true_label):
-            ax.set_title(title,color='red')
-        else:
-            ax.set_title(title, color='black')
-    else:
-        ax.axis('off')  # Hide empty subplots
-
-plt.tight_layout()  # Adjust the spacing between subplots
-plt.show()'''
