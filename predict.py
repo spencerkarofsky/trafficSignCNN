@@ -23,11 +23,17 @@ label_dict = {
     'no right turn': 7
 }
 
+# Randomize testing sets
+# Randomize the orders of the arrays for testing
+# Use same random state for images and labels so that the images and their corresponding labels are aligned
+random_state = np.random.get_state()
+np.random.shuffle(X_test)
+np.random.set_state(random_state)
+np.random.shuffle(y_test)
+
 # Load the previously trained model from trainer.py
 # Code sourced from: https://dontrepeatyourself.org/post/save-and-load-models-with-tensorflow/
 cnn = tf.keras.models.load_model('traffic-sign-cnn')
-
-
 
 '''
 PLOTTING
@@ -40,6 +46,8 @@ cols = 4  # Number of columns in the grid
 rows = (num_images + cols - 1) // cols  # Calculate the number of rows based on the number of images
 
 fig, axes = plt.subplots(rows, cols, figsize=(80, 80))  # Create a figure with subplots
+
+correct_predictions = 0 # used to calculate testing accuracy later
 
 for i, ax in enumerate(axes.flatten()):
     img = X_test[i]  # Get the i-th image array
@@ -61,6 +69,10 @@ for i, ax in enumerate(axes.flatten()):
         ax.set_title(title, color='red')
     else:
         ax.set_title(title, color='black')
+        correct_predictions += 1
+
+test_accuracy = correct_predictions / len(X_test)
+print(f'Test Accuracy: {test_accuracy*100:.2f}%')
 
 plt.tight_layout()  # Adjust the spacing between subplots
 plt.show()
