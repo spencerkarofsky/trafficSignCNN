@@ -155,7 +155,7 @@ labels_encoded = np.array([label_dict[label] for label in np.concatenate((stop_l
 # Convert the encoded labels to one-hot encoded format
 labels = tf.keras.utils.to_categorical(labels_encoded) # y values
 
-# Randomize the orders of the arrays for training/testing
+# Randomize the orders of the arrays for training/validation
 # Use same random state for images and labels so that the images and their corresponding labels are aligned
 random_state = np.random.get_state()
 np.random.shuffle(images)
