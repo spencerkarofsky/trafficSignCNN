@@ -1,7 +1,6 @@
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import pickle
-import cv2
 import numpy as np
 
 # Load pickle file containing the test set
