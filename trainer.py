@@ -189,12 +189,6 @@ test_set = {
 with open("test_data.pkl", "wb") as f:
     pickle.dump(test_set, f)
 
-
-print(f'Training data size: {len(X_train)}')
-print(f'Validation data size: {len(X_val)}')
-print(f'Test data size: {len(X_test)}')
-print(f'\nTotal dataset size: {len(images)}')
-
 '''
 CONVOLUTIONAL NEURAL NETWORK
 '''
