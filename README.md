@@ -1,4 +1,4 @@
-# Traffic Sign CNN
+# Classifying Traffic Signs with Deep Learning and Convolutional Neural Networks
 
 **Overview**
 
@@ -20,23 +20,27 @@ During the initial stages of training, I only achieved accuracies that were at b
 **Visualization**
 
 Here's a visualization of the model of the test set. Images with black text are correct while images with red text are incorrect:
-<img width="1208" alt="Screenshot 2023-06-24 at 3 48 47 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/11792b22-c98b-4dcb-b407-6d3c7794fcb2">
+<img width="1208" alt="traffic-sign-cnn" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/a530b37f-4e12-4d0f-b2fd-ac34fb302b0b">
+
 
 
 
 Here's an expanded view of the model of the complete test set (168 images). The test set achieved 95.24% accuracy.
 
-<img width="1391" alt="Screenshot 2023-06-23 at 10 00 33 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/8dd75d7e-2da3-455f-bfcc-378ab8963b9d">
+<img width="1391" alt="traffic-sign-cnn-expanded" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/3da02a7f-3d65-4be8-886e-bd9f3124d8de">
+
 
 
 
 Here's a visualization of the *augmentImage()* function. The top left image is the base image, while the rest are all augmented versions of the base image.
 
-<img width="1456" alt="Screenshot 2023-06-14 at 9 56 24 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/78448ad5-c407-4759-a058-3b1b94421056">
+<img width="1456" alt="augmentImage-visualization" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/8e010f88-2ad2-41a5-be96-879228421533">
+
 
 
 
 Here's a graphical comparison of the performances of the different convolutional neural network architectures:
 
-<img width="727" alt="Screenshot 2023-06-24 at 8 32 39 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/a33b96c2-d575-4566-affc-16298df68283">
+<img width="727" alt="cnns-comparison" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/5108f129-d575-4dd8-9b16-aa06dc5d0470">
+
 
