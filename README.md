@@ -22,12 +22,21 @@ During the initial stages of training, I only achieved accuracies that were at b
 Here's a visualization of the model of the test set. Images with black text are correct while images with red text are incorrect:
 <img width="1208" alt="Screenshot 2023-06-24 at 3 48 47 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/11792b22-c98b-4dcb-b407-6d3c7794fcb2">
 
+
+
 Here's an expanded view of the model of the complete test set (168 images). The test set achieved 95.24% accuracy.
+
 <img width="1391" alt="Screenshot 2023-06-23 at 10 00 33 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/8dd75d7e-2da3-455f-bfcc-378ab8963b9d">
 
+
+
 Here's a visualization of the *augmentImage()* function. The top left image is the base image, while the rest are all augmented versions of the base image.
+
 <img width="1456" alt="Screenshot 2023-06-14 at 9 56 24 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/78448ad5-c407-4759-a058-3b1b94421056">
 
+
+
 Here's a graphical comparison of the performances of the different convolutional neural network architectures:
+
 <img width="727" alt="Screenshot 2023-06-24 at 8 32 39 PM" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/a33b96c2-d575-4566-affc-16298df68283">
 
