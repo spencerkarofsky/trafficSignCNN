@@ -13,10 +13,13 @@ First, I custom-built a dataset by creating miniature, freestanding traffic sign
 
 
 
+
 I used the ResNet-50 Neural Network architecture to train the dataset. I chose this architecture experimentally, as it yielded the best accuracies of all the architectures that I tested over numerous runs.
 
 <img width="727" alt="cnns-comparison" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/5108f129-d575-4dd8-9b16-aa06dc5d0470">
 <sub>Graphical comparison of the performances of the different convolutional neural network architectures</sub>
+
+
 
 
 During the initial stages of training, I only achieved accuracies that were at best 60-80% on the validation set. After experimenting with numerous architectures and tuning the hyperparameters, I achieved a 94.04% accuracy on the validation set and a 95.24% accuracy on the testing set.
@@ -26,8 +29,10 @@ During the initial stages of training, I only achieved accuracies that were at b
 
 
 
+
 <img width="1391" alt="traffic-sign-cnn-expanded" src="https://github.com/spencerkarofsky/trafficSignCNN/assets/105813301/3da02a7f-3d65-4be8-886e-bd9f3124d8de">
 <sub>Expanded view of the model of the complete test set (168 images). The test set achieved 95.24% accuracy.</sub>
+
 
 
 
