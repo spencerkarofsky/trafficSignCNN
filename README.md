@@ -2,7 +2,7 @@
 
 **Overview**
 
-Artificial Intelligence fascinates me. To satisfy these interests, I have spent my time outside of my computer science curriculum teaching myself machine learning, deep learning, neural networks, and computer vision.
+Artificial Intelligence is a professional interest of mine, and I have spent my time outside of my computer science curriculum teaching myself machine learning, deep learning, neural networks, and computer vision.
 
 To develop my skills in deep learning and computer vision, I trained a Convolutional Neural Network to classify eight common traffic signs: Stop, Yield, Do Not Enter, No U-Turn, No Left Turn, No Right Turn, One Way (Left), and One Way (Right).
 
