@@ -1,6 +1,8 @@
 # Classifying Traffic Signs with Deep Learning and Convolutional Neural Networks
 
-**Overview**
+May 2023-June 2023
+
+**Project Description**
 
 Artificial Intelligence is a professional interest of mine, and I have spent my time outside of my computer science curriculum teaching myself machine learning, deep learning, neural networks, and computer vision.
 
