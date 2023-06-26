@@ -11,6 +11,7 @@ First, I custom-built a dataset by creating miniature, freestanding traffic sign
 I used the ResNet-50 Neural Network architecture to train the dataset. I chose this architecture experimentally, as it yielded the best accuracies of all the architectures that I tested over numerous runs.
 
 During the initial stages of training, I only achieved accuracies that were at best 60-80% on the validation set. After experimenting with numerous architectures and tuning the hyperparameters, I achieved a 94.04% accuracy on the validation set and a 95.24% accuracy on the testing set.
+
 **Instructions**
 
 1) First, run *trainer.py*. This file will train the model on the dataset and create a pickle file for the test set. If the validation accuracy exceeds the accuracy value in *trainer.py*, it will save the model, which is critical for *predict.py*.
