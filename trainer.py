@@ -193,7 +193,7 @@ with open("test_data.pkl", "wb") as f:
 CONVOLUTIONAL NEURAL NETWORK
 '''
 
-# Create the ResNet152 model
+# Instantiate the ResNet-50 model
 cnn = tf.keras.applications.resnet.ResNet50(include_top=True, weights=None, input_shape=(WIDTH, HEIGHT, 3), pooling='max', classes=8)
 
 # Compile the model
