@@ -42,4 +42,4 @@ During the initial stages of training, I only achieved accuracies that were at b
 
 1) First, run *trainer.py*. This file will train the model on the dataset and create a pickle file for the test set. If the validation accuracy exceeds the accuracy value in *trainer.py*, it will save the model, which is critical for *predict.py*.
 
-2) Second, run *trainer.py*. This file will load the trained model and display the images, the model's predictions for the images, and their actual values using Matplotlib.
+2) Second, run *predict.py*. This file will load the trained model and display the images, the model's predictions for the images, and their actual values using Matplotlib.
